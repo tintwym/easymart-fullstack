@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: local_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    # ✅ FIX: Run "app.main:app" because main.py is inside the app folder
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    
+    working_dir: /code  # Keep this as /code (root of backend)
+    
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/local_db
+      - JWT_SECRET=change_me_in_prod
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/code
+      - ./static/images:/code/static/images
+
+volumes:
+  db-data:

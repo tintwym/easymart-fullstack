@@ -1,0 +1,12 @@
+{
+  "venvPath": "backend_api",
+  "venv": "venv",
+  "executionEnvironments": [
+    {
+      "root": "backend_api",
+      "pythonVersion": "3.14",
+      "pythonPlatform": "Darwin"
+    }
+  ]
+}
+

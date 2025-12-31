@@ -1,0 +1,32 @@
+# --- macOS ---
+.DS_Store
+
+# --- VS Code ---
+.vscode/
+
+# --- Flutter / Dart ---
+/easymart/build/
+/easymart/.dart_tool/
+/easymart/.flutter-plugins
+/easymart/.flutter-plugins-dependencies
+/easymart/.pub-cache/
+/easymart/ios/.symlinks/
+/easymart/ios/Pods/
+/easymart/ios/Flutter/Flutter.framework
+/easymart/ios/Flutter/App.framework
+/easymart/android/.gradle
+/easymart/android/local.properties
+
+# --- Python / Backend ---
+/backend/__pycache__/
+/backend/*.pyc
+/backend/venv/
+/backend/.venv/
+/backend/.pytest_cache/
+
+# --- Docker & Environment Secrets ---
+# ⚠️ IMPORTANT: Never upload real passwords!
+.env
+/backend/.env
+postgres_data/
+db-data/
