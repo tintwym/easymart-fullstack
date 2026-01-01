@@ -5,8 +5,6 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, UploadFile, File, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-
-# ✅ FIX IMPORTS: Use relative imports (with a dot .)
 from .routers import auth, users, listings, offers, message, categories
 from .models.models import Base
 from .db.database import engine
@@ -33,7 +31,13 @@ app.mount("/static", StaticFiles(directory="../static"), name="static")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:8000",
+        "*" # Keep wildcard as fallback for mobile apps
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -64,7 +68,7 @@ async def upload_image(request: Request, file: UploadFile = File(...)):
 # Routers
 # --------------------
 # ✅ Explicitly define /api/auth here
-app.include_router(auth.router, prefix="/api/auth")
+app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 app.include_router(users.router, prefix="/api")
 app.include_router(listings.router, prefix="/api")
 app.include_router(offers.router, prefix="/api")

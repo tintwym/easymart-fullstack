@@ -76,10 +76,8 @@ async def login(
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-
-    # 2. ✅ FIX: Cast the password hash explicitly
-    # This creates a variable that Pylance understands is a "string or None"
-    # instead of a "SQL Column object".
+    
+    # 2. Cast password_hash to Optional[str] for mypy compliance
     hashed_pw = cast(Optional[str], user.password_hash)
 
     # 3. Verify password safely using the casted variable
