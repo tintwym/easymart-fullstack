@@ -5,14 +5,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, UploadFile, File, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import auth, users, listings, offers, message, categories
-from .models.models import Base
-from .db.database import engine
+from routers import auth, users, listings, offers, message, categories
+from models.models import Base
+from db.database import engine
 
 # --------------------
 # Setup Upload Directory
 # --------------------
-# We go up one level (..) to save images in backend/static, not backend/app/static
 UPLOAD_DIR = "../static/images" 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 

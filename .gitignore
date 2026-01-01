@@ -23,6 +23,7 @@
 /backend/venv/
 /backend/.venv/
 /backend/.pytest_cache/
+/backend/.idea/
 
 # --- Docker & Environment Secrets ---
 # ⚠️ IMPORTANT: Never upload real passwords!
