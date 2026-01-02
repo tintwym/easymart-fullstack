@@ -13,36 +13,41 @@ class EditProfileScreen extends StatefulWidget {
   State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _bioController = TextEditingController();
+  // Controllers
+  late TextEditingController _displayNameController;
+  late TextEditingController _emailController;
+  late TextEditingController _phoneController;
+  late TextEditingController _addressController;
+  late TextEditingController _bioController;
 
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _loadProfile();
+    
+    // 1. Load existing data from UserModel
+    // We use (widget.user.field ?? "") so if the data is null, it shows an empty box
+    _displayNameController = TextEditingController(text: widget.user.displayName);
+    _emailController = TextEditingController(text: widget.user.email);
+    
+    // For optional fields, handle nulls gracefully
+    _phoneController = TextEditingController(text: widget.user.phone ?? ""); 
+    _addressController = TextEditingController(text: widget.user.address ?? "");
+    _bioController = TextEditingController(text: widget.user.bio ?? "");
   }
 
-  Future<void> _loadProfile() async {
-    setState(() => _isLoading = true);
-
-    // TODO: Replace with your actual API call
-    await Future.delayed(const Duration(milliseconds: 400));
-
-    // Mock response (example)
-    _usernameController.text = "andrew123";
-    _emailController.text = "andrew@example.com";
-    _phoneController.text = "98765432";
-    _bioController.text = "Hello! I love using EasyMart.";
-
-    setState(() => _isLoading = false);
+  @override
+  void dispose() {
+    _displayNameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    _bioController.dispose();
+    super.dispose();
   }
 
   Future<void> _saveProfile() async {
@@ -50,16 +55,74 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     setState(() => _isLoading = true);
 
-    await Future.delayed(const Duration(milliseconds: 600));
+    // 2. Prepare data to send to backend
+    Map<String, dynamic> updatedData = {
+      "id": widget.user.id, 
+      "displayName": _displayNameController.text.trim(),
+      "email": _emailController.text.trim(),
+      "phone": _phoneController.text.trim(),
+      "address": _addressController.text.trim(),
+      "bio": _bioController.text.trim(),
+    };
 
-    setState(() => _isLoading = false);
+    try {
+      // 3. Simulate API Call (Replace with real API later)
+      print("Sending to Backend: $updatedData");
+      
+      await Future.delayed(const Duration(seconds: 2));
 
-    if (context.mounted) {
+      if (!mounted) return;
+
+      // 4. Success Feedback
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Profile updated successfully")),
+        const SnackBar(
+          content: Text("Profile updated successfully!"),
+          backgroundColor: Colors.green,
+        ),
       );
-      Navigator.pop(context);
+      
+      // 5. Return updated data to previous screen
+      Navigator.pop(context, updatedData); 
+      
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error updating profile: $e")),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType type = TextInputType.text,
+    String? Function(String?)? validator,
+    int maxLines = 1,
+  }) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: type,
+      maxLines: maxLines,
+      validator: validator,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+        ),
+        filled: true,
+        fillColor: Colors.grey.shade50,
+        alignLabelWithHint: maxLines > 1,
+      ),
+    );
   }
 
   @override
@@ -67,64 +130,107 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Edit Profile"),
+        centerTitle: true,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
               child: Form(
                 key: _formKey,
-                child: ListView(
+                child: Column(
                   children: [
+                    // --- Profile Picture Section ---
                     Center(
                       child: Stack(
-                        alignment: Alignment.bottomRight,
                         children: [
-                          const CircleAvatar(
-                            radius: 50,
-                            backgroundImage: AssetImage("assets/profile.png"),
+                          Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Theme.of(context).primaryColor,
+                                width: 2,
+                              ),
+                              image: const DecorationImage(
+                                fit: BoxFit.cover,
+                                image: AssetImage("assets/profile.png"),
+                              ),
+                            ),
                           ),
-                          CircleAvatar(
-                            radius: 16,
-                            backgroundColor: Theme.of(context).primaryColor,
-                            child: const Icon(Icons.edit, size: 16, color: Colors.white),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: CircleAvatar(
+                              radius: 18,
+                              backgroundColor: Theme.of(context).primaryColor,
+                              child: const Icon(Icons.camera_alt, size: 18, color: Colors.white),
+                            ),
                           )
                         ],
                       ),
                     ),
-                    const SizedBox(height: 24),
-
-                    TextFormField(
-                      controller: _usernameController,
-                      decoration: const InputDecoration(labelText: "Username"),
-                      validator: (v) => v!.isEmpty ? "Username required" : null,
-                    ),
-                    const SizedBox(height: 16),
-
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(labelText: "Email"),
-                      validator: (v) => v!.isEmpty ? "Email required" : null,
-                    ),
-                    const SizedBox(height: 16),
-
-                    TextFormField(
-                      controller: _phoneController,
-                      decoration: const InputDecoration(labelText: "Phone"),
-                    ),
-                    const SizedBox(height: 16),
-
-                    TextFormField(
-                      controller: _bioController,
-                      decoration: const InputDecoration(labelText: "Bio"),
-                      maxLines: 3,
-                    ),
                     const SizedBox(height: 32),
 
-                    ElevatedButton(
-                      onPressed: _saveProfile,
-                      child: const Text("Save"),
-                    )
+                    // --- Form Fields ---
+                    _buildTextField(
+                      controller: _displayNameController,
+                      label: "displayName",
+                      icon: Icons.person_outline,
+                      validator: (v) => v!.isEmpty ? "displayName is required" : null,
+                    ),
+                    const SizedBox(height: 20),
+
+                    _buildTextField(
+                      controller: _emailController,
+                      label: "Email",
+                      icon: Icons.email_outlined,
+                      type: TextInputType.emailAddress,
+                      validator: (v) => v!.isEmpty || !v.contains('@') ? "Valid email required" : null,
+                    ),
+                    const SizedBox(height: 20),
+
+                    _buildTextField(
+                      controller: _phoneController,
+                      label: "Phone Number",
+                      icon: Icons.phone_outlined,
+                      type: TextInputType.phone,
+                    ),
+                    const SizedBox(height: 20),
+
+                    _buildTextField(
+                      controller: _addressController,
+                      label: "Address",
+                      icon: Icons.location_on_outlined,
+                      type: TextInputType.streetAddress,
+                      maxLines: 2,
+                    ),
+                    const SizedBox(height: 20),
+
+                    _buildTextField(
+                      controller: _bioController,
+                      label: "Bio",
+                      icon: Icons.info_outline,
+                      maxLines: 4,
+                    ),
+                    const SizedBox(height: 40),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: _saveProfile,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text("Save Changes", style: TextStyle(fontSize: 16)),
+                      ),
+                    ),
                   ],
                 ),
               ),

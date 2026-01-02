@@ -4,6 +4,7 @@ from sqlalchemy import select
 from passlib.context import CryptContext
 from typing import cast, Optional
 from pydantic import BaseModel, EmailStr
+import bcrypt
 
 # Internal imports - Ensure these paths match your project structure
 from app.db.database import get_db
@@ -13,7 +14,19 @@ from app.core.security import create_access_token, create_refresh_token
 # Note: We do NOT set prefix="/auth" here because main.py handles it
 router = APIRouter(tags=["Auth"])
 
+# Configure CryptContext for password verification
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def hash_password(password: str) -> str:
+    """Hash password using bcrypt directly to avoid passlib detection issues."""
+    # Encode password to bytes and hash
+    password_bytes = password.encode('utf-8')
+    # Truncate if longer than 72 bytes (bcrypt limit)
+    if len(password_bytes) > 72:
+        password_bytes = password_bytes[:72]
+    salt = bcrypt.gensalt(rounds=12)
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode('utf-8')
 
 # -----------------------------
 # Pydantic Schemas
@@ -49,7 +62,7 @@ async def register(
         email=data.email,
         name=data.name,
         phone=data.phone,
-        password_hash=pwd_context.hash(data.password),
+        password_hash=hash_password(data.password),
     )
 
     db.add(user)
