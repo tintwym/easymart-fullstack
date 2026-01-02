@@ -99,6 +99,7 @@ async def register(
         "id": str(user.id),
         "email": user.email,
         "name": user.name,
+        "phone": user.phone,
     }
 
 
