@@ -30,6 +30,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^1.1.0            # For API calls
+  provider: ^6.1.1        # For State Management
+  shared_preferences: ^2.2.2 # To save your login token
+  dio: ^5.4.0             # For HTTP requests with interceptors
+  dio_cookie_manager: ^3.1.0  # Cookie management
+  cookie_jar: ^4.0.7      # Cookie storage
+  path_provider: ^2.1.1   # For file system access
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

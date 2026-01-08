@@ -11,11 +11,11 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::create('personal_access_tokens', function (Blueprint $table) {
             $table->id();
-            $table->morphs('tokenable');
+            $table->ulidMorphs('tokenable'); // Changed to ulidMorphs
             $table->string('name');
             $table->string('token', 64)->unique();
             $table->text('abilities')->nullable();

@@ -25,7 +25,6 @@ Thumbs.db
 **/backend_api/storage/framework/views/*
 **/backend_api/storage/logs/*
 **/backend_api/.env
-**/backend_api/.env.*
 **/backend_api/bootstrap/cache/*
 **/backend_api/.phpunit.result.cache
 
