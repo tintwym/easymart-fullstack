@@ -1,0 +1,54 @@
+# --- General & OS ---
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+Thumbs.db
+*.log
+*.tmp
+*.swp
+
+# --- IDEs (VS Code & IntelliJ) ---
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# --- Laravel Backend (backend_api/) ---
+**/backend_api/vendor/
+**/backend_api/node_modules/
+**/backend_api/public/storage
+**/backend_api/storage/*.key
+**/backend_api/storage/framework/cache/data/*
+**/backend_api/storage/framework/sessions/*
+**/backend_api/storage/framework/views/*
+**/backend_api/storage/logs/*
+**/backend_api/.env
+**/backend_api/.env.*
+**/backend_api/bootstrap/cache/*
+**/backend_api/.phpunit.result.cache
+
+# --- Flutter Frontend (easy_mart/) ---
+**/easy_mart/.dart_tool/
+**/easy_mart/.flutter-plugins
+**/easy_mart/.flutter-plugins-dependencies
+**/easy_mart/.packages
+**/easy_mart/.pub-cache/
+**/easy_mart/.pub/
+**/easy_mart/build/
+
+# Android specific
+**/easy_mart/android/**/gradle-wrapper.jar
+**/easy_mart/android/.gradle/
+**/easy_mart/android/captures/
+**/easy_mart/android/local.properties
+**/easy_mart/android/key.properties
+**/easy_mart/android/*.jks
+
+# iOS/macOS specific
+**/easy_mart/ios/Flutter/Generated.xcconfig
+**/easy_mart/ios/Flutter/flutter_export_environment.sh
+**/easy_mart/ios/Pods/
+**/easy_mart/ios/.pypanel/
+**/easy_mart/ios/DerivedData/
